@@ -1,8 +1,7 @@
 const express = require("express");
+const morgan = require("morgan");
 const app = express();
 const PORT = 3001;
-
-app.use(express.json());
 
 let phonebook = [
 	{
@@ -26,6 +25,10 @@ let phonebook = [
 		number: "39-23-6423122",
 	},
 ];
+
+// Middlewares
+app.use(express.json());
+app.use(morgan("tiny"));
 
 app.get("/api/persons", (request, response) => {
 	response.json(phonebook);
