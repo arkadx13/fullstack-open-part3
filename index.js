@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const PORT = 3001;
 
+app.use(express.json());
+
 let phonebook = [
 	{
 		id: "1",
@@ -47,6 +49,39 @@ app.get("/api/persons/:id", (request, response) => {
 	} else {
 		response.status(404).end();
 	}
+});
+
+function generateId() {
+	const idArr = phonebook.map((person) => Number(person.id));
+	let newId;
+
+	while (true) {
+		newId = Math.ceil(Math.random() * 1000);
+		if (!idArr.includes(newId)) {
+			break;
+		}
+	}
+
+	return String(newId);
+}
+
+app.post("/api/persons", (request, response) => {
+	const body = request.body;
+
+	if (!body.name || !body.number) {
+		return response
+			.status(400)
+			.json({ error: "Name and Number fields must be filled." });
+	}
+
+	const person = {
+		name: body.name,
+		number: body.number,
+		id: generateId(),
+	};
+
+	phonebook = phonebook.concat(person);
+	response.json(person);
 });
 
 app.delete("/api/persons/:id", (request, response) => {
