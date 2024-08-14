@@ -67,11 +67,20 @@ function generateId() {
 
 app.post("/api/persons", (request, response) => {
 	const body = request.body;
+	const isExisting = Boolean(
+		phonebook.find((person) => person.name === body.name)
+	);
 
+	// The name or number is missing
 	if (!body.name || !body.number) {
 		return response
 			.status(400)
-			.json({ error: "Name and Number fields must be filled." });
+			.json({ error: "name and number fields must be filled" });
+	}
+
+	// The name already exists in the phonebook
+	if (isExisting) {
+		return response.status(400).json({ error: "name must be unique" });
 	}
 
 	const person = {
